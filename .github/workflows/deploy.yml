@@ -9,29 +9,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout kode dari repositori GitHub
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 2. Login ke Docker Hub menggunakan Secrets
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN_BAYUKUN11 }}
 
-      # 3. Build & Push Docker Image menggunakan Dockerfile.staging
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.staging
+          file: ./docker/Dockerfile.staging
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/hubspot-company:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/hubspot-company:${{ github.sha }}
 
-      # 4. Install Nomad CLI langsung dari Rilisan Resmi HashiCorp (v2.0.7)
       - name: Install Nomad CLI
         run: |
           wget -O nomad.zip https://releases.hashicorp.com/nomad/2.0.7/nomad_2.0.7_linux_amd64.zip
@@ -39,7 +35,6 @@ jobs:
           sudo mv nomad /usr/local/bin/
           nomad version
 
-      # 5. Jalankan Job di Nomad Server Ubuntu
       - name: Deploy Job to Nomad Server
         env:
           NOMAD_ADDR: "http://146.190.97.162:4646"
