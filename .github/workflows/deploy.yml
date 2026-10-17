@@ -31,11 +31,13 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/hubspot-company:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/hubspot-company:${{ github.sha }}
 
-      # 4. Install Nomad CLI di Runner GitHub (Gunakan @v1)
-      - name: Setup Nomad CLI
-        uses: hashicorp/setup-nomad@v1
-        with:
-          version: "1.6.0"
+      # 4. Install Nomad CLI langsung dari Rilisan Resmi HashiCorp (v2.0.7)
+      - name: Install Nomad CLI
+        run: |
+          wget -O nomad.zip https://releases.hashicorp.com/nomad/2.0.7/nomad_2.0.7_linux_amd64.zip
+          unzip nomad.zip
+          sudo mv nomad /usr/local/bin/
+          nomad version
 
       # 5. Jalankan Job di Nomad Server Ubuntu
       - name: Deploy Job to Nomad Server
