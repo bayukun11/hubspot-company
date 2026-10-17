@@ -1,0 +1,47 @@
+name: Build and Deploy to Nomad
+
+on:
+  push:
+    branches: [ "main", "master", "staging" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout kode dari repositori GitHub
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2. Login ke Docker Hub menggunakan Secrets
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN_BAYUKUN11 }}
+
+      # 3. Build & Push Docker Image menggunakan Dockerfile.staging
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile.staging
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/hubspot-company:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/hubspot-company:${{ github.sha }}
+
+      # 4. Install Nomad CLI di Runner GitHub
+      - name: Setup Nomad CLI
+        uses: hashicorp/setup-nomad@v2
+        with:
+          version: "1.6.0"
+
+      # 5. Jalankan Job di Nomad Server Ubuntu
+      - name: Deploy Job to Nomad Server
+        env:
+          NOMAD_ADDR: "http://146.190.97.162:4646"
+        run: |
+          nomad job run jobs/hubspot-company.nomad
+EOF
+
