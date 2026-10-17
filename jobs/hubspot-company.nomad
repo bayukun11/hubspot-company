@@ -7,9 +7,8 @@ job "hubspot-company" {
 
     network {
       port "http" {
-        # Menentukan port static agar mudah diakses sesuai requirement Task 2
-        static = 5000
-        to     = 5000
+        static = 5104
+        to     = 5104
       }
     }
 
@@ -18,10 +17,9 @@ job "hubspot-company" {
       port     = "http"
       provider = "consul"
 
-      # Health check HTTP yang akan didaftarkan ke Consul
       check {
         type     = "http"
-        path     = "/"
+        path     = "/scan/health"
         interval = "10s"
         timeout  = "2s"
       }
@@ -31,12 +29,10 @@ job "hubspot-company" {
       driver = "docker"
 
       config {
-        # Mengambil image yang di-build oleh GitHub Actions
         image = "bayukun11/hubspot-company:latest"
         ports = ["http"]
       }
 
-      # Batasan resource CPU dan RAM sesuai requirement Task 2
       resources {
         cpu    = 250
         memory = 256
