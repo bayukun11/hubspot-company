@@ -43,5 +43,3 @@ jobs:
           NOMAD_ADDR: "http://146.190.97.162:4646"
         run: |
           nomad job run jobs/hubspot-company.nomad
-EOF
-
