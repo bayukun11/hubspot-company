@@ -31,9 +31,9 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/hubspot-company:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/hubspot-company:${{ github.sha }}
 
-      # 4. Install Nomad CLI di Runner GitHub
+      # 4. Install Nomad CLI di Runner GitHub (Gunakan @v1)
       - name: Setup Nomad CLI
-        uses: hashicorp/setup-nomad@v2
+        uses: hashicorp/setup-nomad@v1
         with:
           version: "1.6.0"
 
